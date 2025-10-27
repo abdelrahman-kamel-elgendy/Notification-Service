@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Welcome to Our Service</title>
+    <style>
+        body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; margin: 0; padding: 0; }
+        .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+        .header { background: #28a745; color: white; padding: 30px; text-align: center; border-radius: 5px 5px 0 0; }
+        .content { padding: 30px; background: #fff; border: 1px solid #dee2e6; border-top: none; }
+        .footer { padding: 20px; text-align: center; font-size: 12px; color: #666; margin-top: 20px; }
+        .feature { background: #f8f9fa; padding: 15px; margin: 10px 0; border-radius: 4px; border-left: 4px solid #28a745; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Welcome to Our Service!</h1>
+        </div>
+        <div class="content">
+            <p>Hello <strong th:text="${userName}">User</strong>,</p>
+            
+            <p>Welcome to our platform! We're thrilled to have you on board and excited for you to start your journey with us.</p>
+            
+            <p>Here's what you can do with your account:</p>
+            
+            <div class="feature">
+                <strong>🔐 Secure Authentication</strong><br>
+                Your account is protected with industry-standard security measures.
+            </div>
+            
+            <div class="feature">
+                <strong>🚀 Fast & Reliable</strong><br>
+                Enjoy seamless performance across all our services.
+            </div>
+            
+            <div class="feature">
+                <strong>📱 Easy to Use</strong><br>
+                Intuitive interface designed for the best user experience.
+            </div>
+            
+            <p>Get started by exploring all the features we have to offer!</p>
+            
+            <p>If you have any questions or need assistance, our support team is here to help you.</p>
+            
+            <p>Best regards,<br><strong th:text="${appName}"></strong> Team</p>
+        </div>
+        <div class="footer">
+            <p>This is an automated message. Please do not reply to this email.</p>
+            <p>&copy; 2024 <strong th:text="${appName}"></strong>. All rights reserved.</p>
+        </div>
+    </div>
+</body>
+</html>
