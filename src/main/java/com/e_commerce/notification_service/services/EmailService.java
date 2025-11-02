@@ -2,6 +2,8 @@ package com.e_commerce.notification_service.services;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
@@ -20,6 +22,7 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class EmailService {
 
+    @Autowired
     private JavaMailSender mailSender;
 
     public NotificationResponse sendEmail(NotificationRequest request) throws MessagingException {
