@@ -1,46 +1,68 @@
 package com.e_commerce.notification_service.models;
 
-import java.time.Instant;
-
-import org.hibernate.annotations.CreationTimestamp;
-
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+import org.hibernate.annotations.CreationTimestamp;
+
+import com.e_commerce.notification_service.models.enums.NotificationPriority;
+import com.e_commerce.notification_service.models.enums.NotificationType;
+
+import jakarta.persistence.*;
+import java.time.LocalDateTime;
+import java.util.Map;
+import java.util.HashMap;
 
 @Entity
+@Table(name = "in_app_notifications", indexes = {
+        @Index(name = "idx_user_id", columnList = "userId"),
+        @Index(name = "idx_created_at", columnList = "createdAt"),
+        @Index(name = "idx_is_read", columnList = "isRead")
+})
 @Data
 @Builder
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "in_app_notifications")
 public class InAppNotification {
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
-	@Column(nullable = false)
-	private Long userId;
+    @Column(nullable = false)
+    private String userId;
 
-	@Column(nullable = false, length = 150)
-	private String title;
+    @Column(nullable = false)
+    private String title;
 
-	@Column(nullable = false, length = 1000)
-	private String body;
+    @Column(columnDefinition = "TEXT")
+    private String message;
 
-	@Column(nullable = false)
-	private boolean read;
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private NotificationType type;
 
-	@CreationTimestamp
-	@Column(nullable = false, updatable = false)
-	private Instant createdAt;
+    @Enumerated(EnumType.STRING)
+    @Builder.Default
+    private NotificationPriority priority = NotificationPriority.MEDIUM;
+
+    @ElementCollection
+    @CollectionTable(name = "in_app_notification_metadata", joinColumns = @JoinColumn(name = "notification_id"))
+    @MapKeyColumn(name = "metadata_key")
+    @Column(name = "metadata_value")
+    @Builder.Default
+    private Map<String, String> metadata = new HashMap<>();
+
+    @Builder.Default
+    private Boolean isRead = false;
+
+    private LocalDateTime readAt;
+
+    @CreationTimestamp
+    private LocalDateTime createdAt;
 }
-
-

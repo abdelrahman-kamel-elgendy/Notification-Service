@@ -136,7 +136,6 @@ socket.onmessage = function(event) {
 ## Services
 - **NotificationService**: Main service coordinating notification delivery
 - **EmailService**: Handles email notifications
-- **SmsService**: Manages SMS notifications
 - **PushNotificationService**: Handles push notifications
 - **WhatsAppService**: Manages WhatsApp messages
 - **InAppNotificationService**: Manages in-app notifications

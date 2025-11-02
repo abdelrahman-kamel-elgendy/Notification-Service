@@ -1,81 +1,94 @@
 package com.e_commerce.notification_service.models;
 
-import java.time.Instant;
+import java.time.LocalDateTime;
 
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
+import com.e_commerce.notification_service.models.enums.ChannelType;
+import com.e_commerce.notification_service.models.enums.NotificationPriority;
+import com.e_commerce.notification_service.models.enums.NotificationStatus;
+import com.e_commerce.notification_service.models.enums.NotificationType;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.Builder;
+
+import jakarta.persistence.*;
+import java.util.Map;
+import java.util.HashMap;
 
 @Entity
+@Table(name = "notification_logs", indexes = {
+        @Index(name = "idx_recipient", columnList = "recipient"),
+        @Index(name = "idx_status", columnList = "status"),
+        @Index(name = "idx_created_at", columnList = "createdAt")
+})
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "notification_logs")
 public class NotificationLog {
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
-	@Column(nullable = false, length = 50)
-	private String type; // EMAIL, SMS, PUSH, IN_APP
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private ChannelType channel;
 
-	@Column(nullable = false, length = 255)
-	private String recipient;
+    // Add the missing 'type' field that's causing the constraint violation
+    @Enumerated(EnumType.STRING)
+    @Column(name = "type", nullable = false)
+    @Builder.Default
+    private NotificationType type = NotificationType.TRANSACTIONAL;
 
-	@Column(nullable = false, length = 255)
-	private String subject;
+    @Column(nullable = false)
+    private String recipient;
 
-	@Column(columnDefinition = "TEXT")
-	private String content;
+    private String subject;
 
-	@Column(nullable = false, length = 20)
-	private String status; // SENT, FAILED, PENDING
+    @Column(columnDefinition = "TEXT")
+    private String message;
 
-	@Column(columnDefinition = "TEXT")
-	private String errorMessage;
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private NotificationStatus status;
 
-	@Column(length = 50)
-	private String templateName;
+    private String provider;
+    private String providerMessageId;
 
-	@CreationTimestamp
-	@Column(nullable = false, updatable = false)
-	private Instant createdAt;
+    @Column(columnDefinition = "TEXT")
+    private String errorMessage;
 
-	@UpdateTimestamp
-	@Column
-	private Instant updatedAt;
+    @Enumerated(EnumType.STRING)
+    @Builder.Default
+    private NotificationPriority priority = NotificationPriority.MEDIUM;
 
-	@Column
-	private Instant sentAt;
+    @Builder.Default
+    private int retryCount = 0;
 
-	@Column
-	private Integer retryCount;
+    @ElementCollection
+    @CollectionTable(name = "notification_metadata", joinColumns = @JoinColumn(name = "notification_id"))
+    @MapKeyColumn(name = "metadata_key")
+    @Column(name = "metadata_value")
+    @Builder.Default
+    private Map<String, String> metadata = new HashMap<>();
 
-	@Column(length = 1000)
-	private String metadata; // JSON string for additional data
+    @CreationTimestamp
+    private LocalDateTime createdAt;
 
-	@Column(length = 100)
-	private String idempotencyKey;
+    @UpdateTimestamp
+    private LocalDateTime updatedAt;
 
-	@Column(length = 30)
-	private String channel; // EMAIL, SMS, PUSH, IN_APP
-
-	@Column(length = 50)
-	private String provider; // e.g., SMTP, Twilio, FCM
-
-	@Column
-	private Integer attempts;
+    private LocalDateTime sentAt;
 }
-
-
